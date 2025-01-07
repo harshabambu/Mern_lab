@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        var flag=false;
+        var name=prompt("Enter Your Name : ")
+        if(name[0]>'A' && name[0]<'Z')
+            {
+                flag=true;
+            }
+        while(flag==false)
+          {
+            name=prompt("Enter Your Name with Uppercase: ")
+            if(name[0]>'A' && name[0]<'Z')
+            {
+                flag=true;
+            }
+            else
+            {
+                flag=false;
+            }
+          }
+        alert("Hello, "+name);
+    </script>
+</body>
+</html>
