@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Change BG of paragraph</h1>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quisquam natus illum quos. Repellat ratione quasi quaerat aspernatur, quod, magnam placeat iure reprehenderit odio atque veritatis odit deserunt itaque possimus dolores voluptatem explicabo repudiandae, accusantium nesciunt vero obcaecati fugiat? Dicta, ad?</p>
+    <button onclick="changeColor()">Change BG of paragraph </button>
+    <script>
+        function changeColor(){
+            var paragraph = document.querySelector('p');
+            var colors = ['red', 'blue', 'green', 'yellow', 'orange'];
+            var randomColor = colors[Math.floor(Math.random() * colors.length)];
+            paragraph.style.backgroundColor = randomColor;
+        }
+    </script>
+</body>
+</html>
