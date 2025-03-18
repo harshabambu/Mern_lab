@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Counter</title>
+</head>
+<body>
+   <h2>Count</h2>
+   <p id="counter"></p>
+   <textarea id="userinput" rows="6" cols="50"></textarea>
+   <br>
+   <button onclick="sample()">Count</button>
+
+   <script>
+     function sample() {
+        let text = document.getElementById("userinput").value.trim();
+        
+        let letters = text.length;
+        let words = text.length > 0 ? text.split(/\s+/).length : 0;
+        let lines = text.length > 0 ? text.split(/\n/).length : 0;
+
+        document.getElementById("counter").innerHTML = 
+            "Total Characters: " + letters + "<br>" +
+            "Total Words: " + words + "<br>" +
+            "Total Lines: " + lines;
+     }
+   </script>
+</body>
+</html>

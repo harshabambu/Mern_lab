@@ -9,26 +9,8 @@
     <div id="browser-version"></div>
 
     <script>
-        function getBrowserVersion() {
-            var userAgent = navigator.userAgent;
-            var browserVersion = "Unknown";
-
-            if (userAgent.indexOf("Chrome") > -1) {
-                browserVersion = "Chrome " + userAgent.match(/Chrome\/(\d+\.\d+\.\d+\.\d+)/)[1];
-            } else if (userAgent.indexOf("Firefox") > -1) {
-                browserVersion = "Firefox " + userAgent.match(/Firefox\/(\d+\.\d+)/)[1];
-            } else if (userAgent.indexOf("Safari") > -1 && userAgent.indexOf("Chrome") === -1) {
-                browserVersion = "Safari " + userAgent.match(/Version\/(\d+\.\d+)/)[1];
-            } else if (userAgent.indexOf("MSIE") > -1 || !!document.documentMode) {
-                browserVersion = "Internet Explorer " + userAgent.match(/(MSIE \d+\.\d+|rv:\d+\.\d+)/)[1];
-            } else if (userAgent.indexOf("Edge") > -1) {
-                browserVersion = "Edge " + userAgent.match(/Edge\/(\d+\.\d+)/)[1];
-            }
-
-            return browserVersion;
-        }
-
-        document.getElementById("browser-version").innerText = "Browser Version: " + getBrowserVersion();
+        var browserVersion = navigator.appVersion;
+        document.getElementById("browser-version").innerHTML = "Browser Version: " + browserVersion;
     </script>
 </body>
 </html>
