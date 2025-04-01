@@ -1,91 +1,73 @@
-const mongoose = require('mongoose');
-
-// Connect to MongoDB
-mongoose.connect('mongodb://localhost:27017/studentDB', {
-
-})
-.then(() => console.log('MongoDB connected...'))
-.catch(err => console.error('MongoDB connection error:', err));
-
-// Define Student Schema
-const studentSchema = new mongoose.Schema({
-    name: { type: String, required: true },
-    age: { type: Number, required: true },
-    grade: { type: String, required: true }
-});
-
-// Create Student Model
-const Student = mongoose.model('Student', studentSchema);
-
-const express = require('express');
-const bodyParser = require('body-parser');
-
+const express = require("express");
+const { MongoClient, ObjectId } = require("mongodb");
 
 const app = express();
-app.use(bodyParser.json());
+const PORT = 5000;
 
-// Create a new student
-app.post('/students', async (req, res) => {
-    const student = new Student(req.body);
+// const mongoURL = "mongodb://localhost:27017";
+
+const mongoURL = "mongodb+srv://harsha:harsha@cluster0.codce.mongodb.net/";
+const dbName = "MERN_LAB";
+
+app.use(express.json());
+
+let db;
+MongoClient.connect(mongoURL, { useUnifiedTopology: true })
+    .then(client => {
+        db = client.db(dbName);
+        console.log("Connected to MongoDB");
+    })
+    .catch(err => console.error("MongoDB Connection Error:", err));
+
+app.post("/students", async (req, res) => {
     try {
-        await student.save();
-        res.status(201).send(student);
-    } catch (error) {
-        res.status(400).send(error);
+        const result = await db.collection("students").insertOne(req.body);
+        res.status(201).json({ message: "Student added", id: result.insertedId });
+    } catch {
+        res.status(500).json({ error: "Failed to add student" });
     }
 });
 
-// Read all students
-app.get('/students', async (req, res) => {
+app.get("/students", async (req, res) => {
     try {
-        const students = await Student.find();
-        res.send(students);
-    } catch (error) {
-        res.status(500).send(error);
+        const students = await db.collection("students").find().toArray();
+        res.status(200).json(students);
+    } catch {
+        res.status(500).json({ error: "Failed to fetch students" });
     }
 });
 
-// Update a student
-app.patch('/students/:id', async (req, res) => {
-    const updates = Object.keys(req.body);
-    const allowedUpdates = ['name', 'age', 'grade'];
-    const isValidOperation = updates.every(update => allowedUpdates.includes(update));
-
-    if (!isValidOperation) {
-        return res.status(400).send({ error: 'Invalid updates!' });
-    }
-
+app.get("/students/:id", async (req, res) => {
     try {
-        const student = await Student.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
-        if (!student) {
-            return res.status(404).send();
-        }
-        res.send(student);
-    } catch (error) {
-        res.status(400).send(error);
+        const student = await db.collection("students").findOne({ _id: new ObjectId(req.params.id) });
+        if (!student) return res.status(404).json({ error: "Student not found" });
+        res.status(200).json(student);
+    } catch {
+        res.status(500).json({ error: "Failed to fetch student" });
     }
 });
 
-// Delete a student
-app.delete('/students/:id', async (req, res) => {
+app.put("/students/:id", async (req, res) => {
     try {
-        const student = await Student.findByIdAndDelete(req.params.id);
-        if (!student) {
-            return res.status(404).send();
-        }
-        res.send(student);
-    } catch (error) {
-        res.status(500).send(error);
+        const result = await db.collection("students").updateOne(
+            { _id: new ObjectId(req.params.id) },
+            { $set: req.body }
+        );
+        if (!result.modifiedCount) return res.status(404).json({ error: "Student not found" });
+        res.status(200).json({ message: "Student updated" });
+    } catch {
+        res.status(500).json({ error: "Failed to update student" });
     }
 });
 
-// Start the server
-const PORT = process.env.PORT || 3001; // Changed to avoid port conflict
-
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+app.delete("/students/:id", async (req, res) => {
+    try {
+        const result = await db.collection("students").deleteOne({ _id: new ObjectId(req.params.id) });
+        if (!result.deletedCount) return res.status(404).json({ error: "Student not found" });
+        res.status(200).json({ message: "Student deleted" });
+    } catch {
+        res.status(500).json({ error: "Failed to delete student" });
+    }
 });
 
-
-// Export the Student model for use in other files
-module.exports = Student;
+app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
